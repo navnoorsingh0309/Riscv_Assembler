@@ -56,6 +56,7 @@ int Calculate_Immediate(const string &hex, Error *output_error)
     // This function will check if the Immediate is of less than 20 bits and convert it into decimal
     // Remove "0x" prefix if present
     string hexString = hex;
+    cout << hex;
     int decimalValue = 0;
     if (hexString.substr(0, 2) != "0x")
     {
@@ -65,26 +66,17 @@ int Calculate_Immediate(const string &hex, Error *output_error)
         else
         {
             // Altering error to invalid IMMEDIATE_VALUE
-            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid. Out of limit (-2048, 2047)");
             (*output_error).PrintError();
             // Exiting with error code
             exit(INVALID_IMMEDIATE_VALUE);
             return INT_MIN;
         }
     }
-    else if(hexString.substr(0, 2) != "0x")
+    else if(hexString.substr(0, 2) == "0x")
     {
         hexString = hexString.substr(2);
         decimalValue = 0;
-        if (hexString.length() > 5)
-        {
-            // Altering error to invalid IMMEDIATE_VALUE
-            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
-            (*output_error).PrintError();
-            // Exiting with error code
-            exit(INVALID_IMMEDIATE_VALUE);
-            return INT_MIN;
-        }
         int power = hexString.length() - 1;
         for (char c : hexString)
         {
@@ -104,7 +96,7 @@ int Calculate_Immediate(const string &hex, Error *output_error)
             else
             {
                 // Altering error to invalid IMMEDIATE_VALUE
-                (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+                (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid. Invalid Letters");
                 (*output_error).PrintError();
                 // Exiting with error code
                 exit(INVALID_IMMEDIATE_VALUE);
@@ -113,12 +105,22 @@ int Calculate_Immediate(const string &hex, Error *output_error)
             decimalValue += digit * pow(16, power);
             power--;
         }
-        return decimalValue;
+        if(decimalValue > -2049 && decimalValue < 2047)
+            return decimalValue;
+        else
+        {
+            // Altering error to invalid IMMEDIATE_VALUE
+            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid. Out of limit (-2048, 2047)");
+            (*output_error).PrintError();
+            // Exiting with error code
+            exit(INVALID_IMMEDIATE_VALUE);
+            return INT_MIN;
+        }
     }
     else
     {
         // Altering error to invalid IMMEDIATE_VALUE
-        (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+        (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid. Neither Hex nor Integer");
         (*output_error).PrintError();
         // Exiting with error code
         exit(INVALID_IMMEDIATE_VALUE);
