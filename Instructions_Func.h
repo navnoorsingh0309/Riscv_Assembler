@@ -56,7 +56,6 @@ int Calculate_Immediate(const string &hex, Error *output_error)
     // This function will check if the Immediate is of less than 20 bits and convert it into decimal
     // Remove "0x" prefix if present
     string hexString = hex;
-    cout << hex;
     int decimalValue = 0;
     if (hexString.substr(0, 2) != "0x")
     {
