@@ -92,7 +92,7 @@ void dataDirectives(vector<string> dataInst)
             {
                 ss >> temp_word;
                 // If out of range of data
-                if(stoi(temp_word) < -pow(2, (size_of_data * 8) - 1) || stoi(temp_word) > (pow(2, (size_of_data * 8) - 1) -1))
+                if(Calculate_Immediate(temp_word, &output_error) < -pow(2, (size_of_data * 8) - 1) || stoi(temp_word) > (pow(2, (size_of_data * 8) - 1) -1))
                 {
                     // Altering error to invalid data
                     output_error.AlterError(INVALID_DATA, "Data Error");
@@ -102,7 +102,7 @@ void dataDirectives(vector<string> dataInst)
                 }
                 // Storing in output
                 output_string = "";
-                output_string = decToHexa(memory_address) + " " + decToHexa(stoi(temp_word));
+                output_string = decToHexa(memory_address) + " " + decToHexa(Calculate_Immediate(temp_word, &output_error));
                 cout<<"DATA:"<<output_string<<endl;
                 outputCode.push_back(output_string);
                 // Increasing memory location
