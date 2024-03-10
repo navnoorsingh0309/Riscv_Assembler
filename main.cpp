@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <math.h>
-#include "Riscv_Instructions.h"
+#include "Riscv_instructions.h"
 #include "Instructions_Func.h"
 #include "Auxiliary_Functions.h"
 
@@ -92,7 +92,7 @@ void dataDirectives(vector<string> dataInst)
             {
                 ss >> temp_word;
                 // If out of range of data
-                if(Calculate_Immediate(temp_word, &output_error) < -pow(2, (size_of_data * 8) - 1) || stoi(temp_word) > (pow(2, (size_of_data * 8) - 1) -1))
+                if(Calculate_Immediate(temp_word, &output_error) < -pow(2, (size_of_data * 8) - 1) || Calculate_Immediate(temp_word, &output_error) > (pow(2, (size_of_data * 8) - 1) -1))
                 {
                     // Altering error to invalid data
                     output_error.AlterError(INVALID_DATA, "Data Error");
@@ -131,7 +131,7 @@ int main()
             // Empty or comments
             if (line.empty() || line[0] == '#')
                 continue; // Ignore Comments and empty lines
-            
+
             // If derivatives
             if (line == ".data")
             {
