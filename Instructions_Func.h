@@ -51,6 +51,81 @@ public:
     }
 };
 
+int Calculate_Immediate(const string &hex, Error *output_error)
+{
+    // This function will check if the Immediate is of less than 20 bits and convert it into decimal
+    // Remove "0x" prefix if present
+    string hexString = hex;
+    int decimalValue = 0;
+    if (hexString.substr(0, 2) != "0x")
+    {
+        decimalValue = stoi(hex);
+        if(decimalValue < 2048 && decimalValue > -2049)
+            return decimalValue;
+        else
+        {
+            // Altering error to invalid IMMEDIATE_VALUE
+            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+            (*output_error).PrintError();
+            // Exiting with error code
+            exit(INVALID_IMMEDIATE_VALUE);
+            return INT_MIN;
+        }
+    }
+    else if(hexString.substr(0, 2) != "0x")
+    {
+        hexString = hexString.substr(2);
+        decimalValue = 0;
+        if (hexString.length() > 5)
+        {
+            // Altering error to invalid IMMEDIATE_VALUE
+            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+            (*output_error).PrintError();
+            // Exiting with error code
+            exit(INVALID_IMMEDIATE_VALUE);
+            return INT_MIN;
+        }
+        int power = hexString.length() - 1;
+        for (char c : hexString)
+        {
+            int digit;
+            if (c >= '0' && c <= '9')
+            {
+                digit = c - '0';
+            }
+            else if (c >= 'a' && c <= 'f')
+            {
+                digit = c - 'a' + 10;
+            }
+            else if (c >= 'A' && c <= 'F')
+            {
+                digit = c - 'A' + 10;
+            }
+            else
+            {
+                // Altering error to invalid IMMEDIATE_VALUE
+                (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+                (*output_error).PrintError();
+                // Exiting with error code
+                exit(INVALID_IMMEDIATE_VALUE);
+                return INT_MIN;
+            }
+            decimalValue += digit * pow(16, power);
+            power--;
+        }
+        return decimalValue;
+    }
+    else
+    {
+        // Altering error to invalid IMMEDIATE_VALUE
+        (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
+        (*output_error).PrintError();
+        // Exiting with error code
+        exit(INVALID_IMMEDIATE_VALUE);
+        return INT_MIN;
+    }
+}
+
 const int Normal_XNum_Parameter(const string &given_parameter, Error *output_error)
 {
     int reg_number;
@@ -158,80 +233,6 @@ int Label_Offset_Parameter(unordered_map<string, long long> labels_PC, const str
     }
 }
 
-int Calculate_Immediate(const string &hex, Error *output_error)
-{
-    // This function will check if the Immediate is of less than 20 bits and convert it into decimal
-    // Remove "0x" prefix if present
-    string hexString = hex;
-    int decimalValue = 0;
-    if (hexString.substr(0, 2) != "0x")
-    {
-        decimalValue = stoi(hex);
-        if(decimalValue < 2048 && decimalValue > -2049)
-            return decimalValue;
-        else
-        {
-            // Altering error to invalid IMMEDIATE_VALUE
-            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
-            (*output_error).PrintError();
-            // Exiting with error code
-            exit(INVALID_IMMEDIATE_VALUE);
-            return INT_MIN;
-        }
-    }
-    else if(hexString.substr(0, 2) != "0x")
-    {
-        hexString = hexString.substr(2);
-        decimalValue = 0;
-        if (hexString.length() > 5)
-        {
-            // Altering error to invalid IMMEDIATE_VALUE
-            (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
-            (*output_error).PrintError();
-            // Exiting with error code
-            exit(INVALID_IMMEDIATE_VALUE);
-            return INT_MIN;
-        }
-        int power = hexString.length() - 1;
-        for (char c : hexString)
-        {
-            int digit;
-            if (c >= '0' && c <= '9')
-            {
-                digit = c - '0';
-            }
-            else if (c >= 'a' && c <= 'f')
-            {
-                digit = c - 'a' + 10;
-            }
-            else if (c >= 'A' && c <= 'F')
-            {
-                digit = c - 'A' + 10;
-            }
-            else
-            {
-                // Altering error to invalid IMMEDIATE_VALUE
-                (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
-                (*output_error).PrintError();
-                // Exiting with error code
-                exit(INVALID_IMMEDIATE_VALUE);
-                return INT_MIN;
-            }
-            decimalValue += digit * pow(16, power);
-            power--;
-        }
-        return decimalValue;
-    }
-    else
-    {
-        // Altering error to invalid IMMEDIATE_VALUE
-        (*output_error).AlterError(INVALID_IMMEDIATE_VALUE, "Typed IMMEDIATE_VALUE is invalid");
-        (*output_error).PrintError();
-        // Exiting with error code
-        exit(INVALID_IMMEDIATE_VALUE);
-        return INT_MIN;
-    }
-}
 
 // Function to check if it a valid instruction
 const RISC_V_Instructions InitializeInstruction(const unordered_map<string, long long> labels_PC, const string &inst, Error *output_error, int program_counter)
